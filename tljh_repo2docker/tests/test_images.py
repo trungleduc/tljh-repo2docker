@@ -1,5 +1,4 @@
 import pytest
-
 from jupyterhub.tests.utils import get_page
 
 from .utils import add_environment, wait_for_image

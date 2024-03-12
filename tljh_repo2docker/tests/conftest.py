@@ -1,8 +1,8 @@
 import pytest
-
 from aiodocker import Docker, DockerError
-from tljh_repo2docker import tljh_custom_jupyterhub_config
 from traitlets.config import Config
+
+from tljh_repo2docker import tljh_custom_jupyterhub_config
 
 
 async def remove_docker_image(image_name):

@@ -45,13 +45,29 @@ c.JupyterHub.services.extend(
                 sys.executable,
                 "-m",
                 "tljh_repo2docker",
-                "--TljhRepo2Docker.ip",
+                "--ip",
                 "127.0.0.1",
-                "--TljhRepo2Docker.port",
+                "--port",
                 "6789",
             ],
             "oauth_no_confirm": True,
-            "admin": True
         }
     ]
 )
+
+c.JupyterHub.load_roles = [
+    {
+        "description": "Role for tljh_repo2docker service",
+        "name": "tljh_repo2docker_role",
+        "scopes": ["read:users", "read:servers", "read:roles:users"],
+        "services": ["tljh_repo2docker"],
+    },
+    {
+        "name": "env-user",
+        "scopes": [
+            # access to the env page
+            "access:services"
+        ],
+        "users": ["trung"],
+    },
+]

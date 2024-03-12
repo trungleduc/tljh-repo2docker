@@ -2,10 +2,9 @@ import json
 import re
 
 from aiodocker import Docker, DockerError
-from .base import BaseHandler
-from jupyterhub.utils import admin_only
 from tornado import web
 
+from .base import BaseHandler
 from .docker import build_image
 
 IMAGE_NAME_RE = r"^[a-z0-9-_]+$"

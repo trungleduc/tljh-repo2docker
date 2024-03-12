@@ -1,11 +1,11 @@
 import json
 
 from aiodocker import Docker
-from .base import BaseHandler
-from jupyterhub.utils import admin_only
 from tornado import web
 from tornado.ioloop import IOLoop
 from tornado.iostream import StreamClosedError
+
+from .base import BaseHandler
 
 
 class LogsHandler(BaseHandler):

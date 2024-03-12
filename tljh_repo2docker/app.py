@@ -3,20 +3,19 @@ import os
 import socket
 import typing as tp
 from pathlib import Path
-from urllib.parse import urlsplit, urlunsplit
 
-from jinja2 import Environment, ChoiceLoader, FileSystemLoader, PackageLoader
-from tornado import ioloop, web
-from tornado.log import access_log, app_log, gen_log
-from traitlets import Dict, Int, List, Unicode, default, validate
-from traitlets.config.application import Application
-from jupyterhub.utils import url_path_join
+from jinja2 import Environment, PackageLoader
 from jupyterhub.app import DATA_FILES_PATH
 from jupyterhub.handlers.static import LogoHandler
+from jupyterhub.utils import url_path_join
+from tornado import ioloop, web
+from traitlets import Dict, Int, List, Unicode, default, validate
+from traitlets.config.application import Application
+
 from .builder import BuildHandler
-from .servers import ServersHandler
 from .environments import EnvironmentsHandler
 from .logs import LogsHandler
+from .servers import ServersHandler
 
 if os.environ.get("JUPYTERHUB_API_TOKEN"):
     from jupyterhub.services.auth import HubOAuthCallbackHandler
@@ -32,8 +31,6 @@ HERE = Path(__file__).parent
 
 class TljhRepo2Docker(Application):
     name = Unicode("tljh-repo2docker")
-
-    version = "1.0.0"
 
     port = Int(6789, help="Port of the service", config=True)
 
@@ -105,6 +102,8 @@ class TljhRepo2Docker(Application):
     def _default_log_level(self):
         return logging.INFO
 
+    aliases = {"port": "TljhRepo2Docker.port", "ip": "TljhRepo2Docker.ip"}
+
     def init_settings(self) -> tp.Dict:
         """Initialize settings for the service application."""
         static_path = DATA_FILES_PATH + "/static/"
@@ -152,10 +151,15 @@ class TljhRepo2Docker(Application):
                 ),
                 (self.service_prefix, web.RedirectHandler, {"url": server_url}),
                 (server_url, ServersHandler),
-                (url_path_join(self.service_prefix, r"environments"), EnvironmentsHandler),
+                (
+                    url_path_join(self.service_prefix, r"environments"),
+                    EnvironmentsHandler,
+                ),
                 (url_path_join(self.service_prefix, r"api/environments"), BuildHandler),
                 (
-                    url_path_join(self.service_prefix, r"api/environments/([^/]+)/logs"),
+                    url_path_join(
+                        self.service_prefix, r"api/environments/([^/]+)/logs"
+                    ),
                     LogsHandler,
                 ),
             ]

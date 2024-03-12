@@ -1,7 +1,6 @@
 import json
 
 import pytest
-
 from jupyterhub.tests.utils import api_request, async_requests
 
 from .utils import add_environment, wait_for_image

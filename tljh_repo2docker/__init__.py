@@ -1,18 +1,14 @@
-import os
-
-
 from aiodocker import Docker
 from dockerspawner import DockerSpawner
-from jinja2 import Environment, BaseLoader
+from jinja2 import BaseLoader, Environment
 from jupyter_client.localinterfaces import public_ips
-
 from jupyterhub.traitlets import ByteSpecification
-from tljh.hooks import hookimpl
 from tljh.configurer import load_config
+from tljh.hooks import hookimpl
 from traitlets import Unicode
 from traitlets.config import Configurable
-from .docker import list_images
 
+from .docker import list_images
 
 # Default CPU period
 # See: https://docs.docker.com/config/containers/resource_constraints/#limit-a-containers-access-to-memory#configure-the-default-cfs-scheduler

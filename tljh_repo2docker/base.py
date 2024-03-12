@@ -1,30 +1,30 @@
-import os
-from typing import Dict
-from tornado import web
-from jupyterhub.utils import url_path_join
-from jupyterhub.services.auth import HubOAuthenticated
-from jinja2 import Template
-from .model import UserModel
-from httpx import AsyncClient
 import json
+import os
 
-JUPYTERHUB_API_URL = os.environ.get("JUPYTERHUB_API_URL", "")
-API_TOKEN = os.environ.get("JUPYTERHUB_API_TOKEN", None)
-print("JUPYTERHUB_API_URL", JUPYTERHUB_API_URL)
+from httpx import AsyncClient
+from jinja2 import Template
+from jupyterhub.services.auth import HubOAuthenticated
+from jupyterhub.utils import url_path_join
+from tornado import web
+from jupyterhub.scopes import needs_scope
+from .model import UserModel
 
 
 class BaseHandler(HubOAuthenticated, web.RequestHandler):
     """
     Base handler for tljh_repo2docker service
     """
+
     _client = None
 
     @property
     def client(self):
         if not BaseHandler._client:
+            api_url = os.environ.get("JUPYTERHUB_API_URL", "")
+            api_token = os.environ.get("JUPYTERHUB_API_TOKEN", None)
             BaseHandler._client = AsyncClient(
-                base_url=JUPYTERHUB_API_URL,
-                headers={f"Authorization": f"Bearer {API_TOKEN}"},
+                base_url=api_url,
+                headers={f"Authorization": f"Bearer {api_token}"},
             )
         return BaseHandler._client
 
@@ -32,7 +32,11 @@ class BaseHandler(HubOAuthenticated, web.RequestHandler):
         user = self.current_user
         url = url_path_join("users", user["name"])
         response = await self.client.get(url + "?include_stopped_servers")
-        user_model = response.json()
+        user_model: dict = response.json()
+        user_model.setdefault("name", user["name"])
+        user_model.setdefault("servers", {})
+        user_model.setdefault("admin", False)
+
         return UserModel.from_dict(user_model)
 
     def get_template(self, name: str) -> Template:

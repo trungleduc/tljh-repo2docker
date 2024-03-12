@@ -20,9 +20,9 @@ function _OpenServerButton(props: IOpenServerButton) {
 
   const [progress, setProgress] = useState(0);
   useEffect(() => {
-    const { user, baseUrl, xsrfToken } = jhData;
+    const { user, hubPrefix, xsrfToken } = jhData;
     let progressUrl = urlJoin(
-      baseUrl,
+      hubPrefix,
       'api',
       'users',
       user,

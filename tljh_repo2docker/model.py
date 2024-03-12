@@ -1,5 +1,6 @@
 from dataclasses import dataclass, fields
 
+
 @dataclass
 class UserModel:
 
