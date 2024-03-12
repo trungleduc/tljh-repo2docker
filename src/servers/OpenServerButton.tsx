@@ -54,7 +54,7 @@ function _OpenServerButton(props: IOpenServerButton) {
     const data = new FormData();
     data.append('image', imageName);
     try {
-      await axios.request({
+      await axios.hubClient.request({
         method: 'post',
         prefix: SPAWN_PREFIX,
         path: `${jhData.user}/${props.serverName}`,

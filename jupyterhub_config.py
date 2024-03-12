@@ -8,6 +8,7 @@ import getpass
 from jupyterhub.auth import DummyAuthenticator
 from tljh.configurer import apply_config, load_config
 from tljh_repo2docker import tljh_custom_jupyterhub_config
+import sys
 
 c.JupyterHub.services = []
 
@@ -34,3 +35,23 @@ user = getpass.getuser()
 c.Authenticator.admin_users = {user, "alice"}
 c.JupyterHub.allow_named_servers = True
 c.JupyterHub.ip = "0.0.0.0"
+
+c.JupyterHub.services.extend(
+    [
+        {
+            "name": "tljh_repo2docker",
+            "url": "http://127.0.0.1:6789",
+            "command": [
+                sys.executable,
+                "-m",
+                "tljh_repo2docker",
+                "--TljhRepo2Docker.ip",
+                "127.0.0.1",
+                "--TljhRepo2Docker.port",
+                "6789",
+            ],
+            "oauth_no_confirm": True,
+            "admin": True
+        }
+    ]
+)
